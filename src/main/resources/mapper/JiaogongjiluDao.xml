@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.JiaogongjiluDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.jiaogongjilu_uuid_number as jiaogongjiluUuidNumber
+        ,a.jiaogongjilu_name as jiaogongjiluName
+        ,a.jiaogongjilu_types as jiaogongjiluTypes
+        ,a.gongzuoliang_num as gongzuoliangNum
+        ,a.jiaogongjilu_text as jiaogongjiluText
+        ,a.jiaogongjilu_content as jiaogongjiluContent
+        ,a.jiaogongjilu_gongling as jiaogongjiluGongling
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.JiaogongjiluView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+
+        FROM jiaogongjilu  a
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.jiaogongjiluUuidNumber != '' and params.jiaogongjiluUuidNumber != null and params.jiaogongjiluUuidNumber != 'null' ">
+                and a.jiaogongjilu_uuid_number like CONCAT('%',#{params.jiaogongjiluUuidNumber},'%')
+            </if>
+            <if test=" params.jiaogongjiluName != '' and params.jiaogongjiluName != null and params.jiaogongjiluName != 'null' ">
+                and a.jiaogongjilu_name like CONCAT('%',#{params.jiaogongjiluName},'%')
+            </if>
+            <if test="params.jiaogongjiluTypes != null and params.jiaogongjiluTypes != ''">
+                and a.jiaogongjilu_types = #{params.jiaogongjiluTypes}
+            </if>
+            <if test="params.gongzuoliangNumStart != null and params.gongzuoliangNumStart != ''">
+                <![CDATA[  and a.gongzuoliang_num >= #{params.gongzuoliangNumStart}   ]]>
+            </if>
+            <if test="params.gongzuoliangNumEnd != null and params.gongzuoliangNumEnd != ''">
+                <![CDATA[  and a.gongzuoliang_num <= #{params.gongzuoliangNumEnd}   ]]>
+            </if>
+             <if test="params.gongzuoliangNum != null and params.gongzuoliangNum != ''">
+                and a.gongzuoliang_num = #{params.gongzuoliangNum}
+             </if>
+            <if test=" params.jiaogongjiluText != '' and params.jiaogongjiluText != null and params.jiaogongjiluText != 'null' ">
+                and a.jiaogongjilu_text like CONCAT('%',#{params.jiaogongjiluText},'%')
+            </if>
+            <if test=" params.jiaogongjiluContent != '' and params.jiaogongjiluContent != null and params.jiaogongjiluContent != 'null' ">
+                and a.jiaogongjilu_content like CONCAT('%',#{params.jiaogongjiluContent},'%')
+            </if>
+            <if test="params.jiaogongjiluGonglingStart != null and params.jiaogongjiluGonglingStart != ''">
+                <![CDATA[  and a.jiaogongjilu_gongling >= #{params.jiaogongjiluGonglingStart}   ]]>
+            </if>
+            <if test="params.jiaogongjiluGonglingEnd != null and params.jiaogongjiluGonglingEnd != ''">
+                <![CDATA[  and a.jiaogongjilu_gongling <= #{params.jiaogongjiluGonglingEnd}   ]]>
+            </if>
+             <if test="params.jiaogongjiluGongling != null and params.jiaogongjiluGongling != ''">
+                and a.jiaogongjilu_gongling = #{params.jiaogongjiluGongling}
+             </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>
